@@ -14,9 +14,7 @@ outdir   <- "results/mr_basic"
 # sample sizes (edit to your real Ns)
 N_gwas <- 12584
 N_exp  <- list(
-  CSF    = 804,
   plasma = 20013,
-  plasma2= 7213,
   brain  = 376
 )
 
@@ -25,7 +23,7 @@ DO_CLUMP  <- TRUE
 CLUMP_R2  <- 0.001
 CLUMP_KB  <- 10000
 
-# Filter outcome SNPs (your original used pval.outcome > 5e-8)
+# Filter outcome SNPs 
 KEEP_OUTCOME_P_GT <- 5e-8
 
 # MR methods (keep minimal)
@@ -39,21 +37,17 @@ dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
 load(rdata_in)
 
 # Expect the Rdata to contain (names can be adjusted here):
-# exposures (lists): CSF_pQTL, plasma_pQTL, plasma2_pQTL, brain_pQTL_rosmap
-# outcomes (data.frames): out_ms_CSF, out_ms_plasma, out_ms_plasma2, out_ms_brain
+# exposures (lists): plasma_pQTL,  brain_pQTL_rosmap
+# outcomes (data.frames): out_ms_plasma,  out_ms_brain
 
 # If your objects are named differently, map them here:
 exposure_map <- list(
-  CSF    = CSF_pQTL,
   plasma = plasma_pQTL,
-  plasma2= plasma2_pQTL,
   brain  = brain_pQTL_rosmap
 )
 
 outcome_map <- list(
-  CSF    = out_ms_CSF,
   plasma = out_ms_plasma,
-  plasma2= out_ms_plasma2,
   brain  = out_ms_brain
 )
 
@@ -88,7 +82,7 @@ run_mr_tissue <- function(exposure_list, outcome_df, n_exp, n_gwas,
     dat <- harmonise_data(
       exposure_dat = exp_dat,
       outcome_dat  = outcome_df,
-      action = 2
+      action = 1
     )
     
     if (nrow(dat) == 0) next
@@ -147,4 +141,5 @@ for (tissue in names(exposure_map)) {
   fwrite(out$steiger,    file.path(outdir, paste0("mr_", tissue, "_steiger.tsv")), sep = "\t")
   
   message("[DONE] ", tissue, " -> ", outdir)
+
 }
